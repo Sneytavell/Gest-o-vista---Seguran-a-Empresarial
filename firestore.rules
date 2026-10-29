@@ -1,0 +1,65 @@
+rules_version = '2';
+// Regras do banco do Gestão à Vista.
+// - Sem login, nada é lido nem gravado (exceto saber se o portal já foi configurado).
+// - Visualizador: só lê os painéis.
+// - Editor: lê, cria e edita painéis e categorias.
+// - Administrador: tudo, inclusive excluir painéis e gerenciar usuários.
+// Usuário desativado (ativo = false) perde todo o acesso na hora.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function logado() { return request.auth != null; }
+    function caminhoEu() { return /databases/$(database)/documents/usuarios/$(request.auth.uid); }
+    function eu() { return get(caminhoEu()).data; }
+    function ativo() { return logado() && exists(caminhoEu()) && eu().ativo == true; }
+    function admin() { return ativo() && eu().papel == 'admin'; }
+    function editor() { return ativo() && (eu().papel == 'admin' || eu().papel == 'editor'); }
+    function papelValido(d) { return d.papel in ['visualizador', 'editor', 'admin'] && d.ativo is bool; }
+    function inicial() { return /databases/$(database)/documents/config/inicial; }
+
+    // Cadastro de usuários
+    match /usuarios/{uid} {
+      allow read: if logado() && (request.auth.uid == uid || admin());
+
+      // Administrador cria usuários; ou, na primeira configuração, a própria pessoa
+      // se cria como administrador junto com o marcador config/inicial.
+      allow create: if (admin() && papelValido(request.resource.data))
+        || (logado() && request.auth.uid == uid
+            && !exists(inicial()) && existsAfter(inicial())
+            && request.resource.data.papel == 'admin' && request.resource.data.ativo == true);
+
+      // Administrador edita os outros; o próprio cadastro não pode mudar papel nem se desativar.
+      allow update: if admin() && papelValido(request.resource.data)
+        && (request.auth.uid != uid
+            || (request.resource.data.papel == resource.data.papel && request.resource.data.ativo == resource.data.ativo));
+
+      allow delete: if admin() && request.auth.uid != uid;
+    }
+
+    // Marcador da primeira configuração (criado uma única vez)
+    match /config/inicial {
+      allow read: if true;
+      allow create: if logado() && !exists(inicial())
+        && getAfter(caminhoEu()).data.papel == 'admin';
+      allow update, delete: if false;
+    }
+
+    // Cores das categorias
+    match /config/geral {
+      allow read: if ativo();
+      allow write: if editor();
+    }
+
+    // Painéis
+    match /paineis/{id} {
+      allow read: if ativo();
+      allow create, update: if editor();
+      allow delete: if admin();
+    }
+
+    // Qualquer outro caminho: bloqueado
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

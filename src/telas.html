@@ -1,0 +1,186 @@
+<div class="gate" id="gate" role="dialog" aria-modal="true" aria-labelledby="gTitulo">
+  <div class="gcard">
+    <div class="gstripe" aria-hidden="true"></div>
+    <div class="gbody">
+      <div class="logo glogo"><img class="logo-img" alt="Albras – Alumínio Brasileiro S.A."></div>
+      <h1 id="gTitulo">Gestão à Vista</h1>
+      <p class="gsub">Segurança Empresarial</p>
+      <p class="gmsg" id="gMsg">Carregando…</p>
+
+      <form id="gLogin" class="gform" novalidate hidden>
+        <div class="field"><label for="gEmail">E-mail</label><input id="gEmail" type="email" autocomplete="username"></div>
+        <div class="field"><label for="gSenha">Senha</label><input id="gSenha" type="password" autocomplete="current-password"></div>
+        <p class="gerro" id="gErro" role="alert"></p>
+        <button class="btn primary gbtn" type="submit" id="gEntrar">Entrar</button>
+        <button class="glink" type="button" id="gEsqueci">Esqueci minha senha</button>
+      </form>
+
+      <form id="gSetup" class="gform" novalidate hidden>
+        <p class="gnota"><b>Primeira configuração.</b> Ainda não há administrador. Crie o seu acesso; depois disso, só você cadastra as outras pessoas.</p>
+        <div class="field"><label for="suNome">Nome completo</label><input id="suNome" type="text" maxlength="60" autocomplete="name"></div>
+        <div class="row2">
+          <div class="field"><label for="suEmail">E-mail</label><input id="suEmail" type="email" autocomplete="username"></div>
+          <div class="field"><label for="suEmp">Empresa</label><input id="suEmp" type="text" maxlength="60"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label for="suSenha">Senha (mín. 8)</label><input id="suSenha" type="password" autocomplete="new-password"></div>
+          <div class="field"><label for="suSenha2">Repita a senha</label><input id="suSenha2" type="password" autocomplete="new-password"></div>
+        </div>
+        <p class="gerro" id="suErro" role="alert"></p>
+        <button class="btn primary gbtn" type="submit" id="suOk">Criar administrador e entrar</button>
+      </form>
+
+      <button class="btn primary gbtn" id="gAcao" type="button" hidden></button>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="bar">
+    <button class="iconbtn" id="menuBtn" type="button" aria-label="Abrir ou recolher o menu" aria-controls="sidebar">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div class="brand">
+      <div class="logo"><img class="logo-img" alt="Albras – Alumínio Brasileiro S.A."></div>
+      <div class="txt"><h1>Gestão à Vista</h1><p>Segurança Empresarial</p></div>
+    </div>
+    <label class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" placeholder="Buscar painel" aria-label="Buscar painel">
+    </label>
+    <div class="hright">
+      <button class="iconbtn theme" id="themeBtn" type="button" aria-label="Alternar tema claro/escuro"></button>
+      <button class="btn-create" id="createBtn" type="button" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Criar</span>
+      </button>
+      <div class="account" id="account" hidden>
+        <button class="avatar" id="userBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Conta"><img id="userImg" alt=""></button>
+        <div class="umenu" id="umenu" hidden>
+          <div class="uhead"><img id="userImg2" alt=""><div><strong id="userName"></strong><small id="userEmpresa"></small><span id="userRole"></span></div></div>
+          <button class="uitem" id="uPerfil" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Meu perfil</button>
+          <button class="uitem" id="uSair" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 17l5-5-5-5M15 12H4"/></svg>Sair</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside id="sidebar" aria-label="Menu de navegação">
+    <div class="drawer-head">
+      <button class="iconbtn" id="closeBtn" type="button" aria-label="Fechar menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="logo"><img class="logo-img" alt=""></div>
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+  <div class="backdrop" id="backdrop"></div>
+  <main>
+   <div id="homeView">
+    <div class="chips" id="chips" role="toolbar" aria-label="Painéis mais acessados"></div>
+    <div class="head"><h2 id="viewTitle">Início</h2><span id="viewCount"></span></div>
+    <div class="grid" id="grid"></div>
+   </div>
+   <section id="visualView" hidden>
+    <div class="vbar">
+      <button class="iconbtn" id="vVoltar" type="button" aria-label="Voltar aos painéis" title="Voltar aos painéis"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <span class="dot" id="vDot"></span>
+      <div class="vtit"><h2 id="vTitulo"></h2><span id="vCat"></span></div>
+      <div class="vacts">
+        <button class="mini-btn" id="vFav" type="button"></button>
+        <button class="mini-btn" id="vEditar" type="button" title="Editar painel" aria-label="Editar painel" hidden></button>
+        <button class="mini-btn" id="vRecarregar" type="button" title="Recarregar relatório" aria-label="Recarregar relatório"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></button>
+        <button class="mini-btn" id="vTela" type="button" title="Tela cheia" aria-label="Tela cheia"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        <button class="mini-btn" id="vAba" type="button" title="Abrir em nova aba" aria-label="Abrir em nova aba"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg></button>
+      </div>
+    </div>
+    <div class="vframe" id="vFrame"></div>
+   </section>
+   <section id="perfilView" hidden>
+    <button class="back" id="perfilVoltar" type="button"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>Voltar aos painéis</button>
+    <div class="pcard">
+      <div class="phead"><span class="pini" id="pIni"></span><div><h2>Meu perfil</h2><p id="pSub"></p></div></div>
+      <dl class="pdados">
+        <div><dt>Nome</dt><dd id="pNome"></dd></div>
+        <div><dt>E-mail</dt><dd id="pEmail"></dd></div>
+        <div><dt>Empresa</dt><dd id="pEmp"></dd></div>
+        <div><dt>Tipo de acesso</dt><dd id="pTipo"></dd></div>
+      </dl>
+      <form id="pSenhaForm" class="psenha" novalidate>
+        <h3>Trocar minha senha</h3>
+        <div class="row3">
+          <div class="field"><label for="psAtual">Senha atual</label><input id="psAtual" type="password" autocomplete="current-password"></div>
+          <div class="field"><label for="psNova">Nova senha</label><input id="psNova" type="password" autocomplete="new-password"></div>
+          <div class="field"><label for="psNova2">Repita a nova</label><input id="psNova2" type="password" autocomplete="new-password"></div>
+        </div>
+        <div class="actions"><button type="submit" class="btn primary" id="psOk">Trocar senha</button></div>
+      </form>
+    </div>
+    <div class="pcard" id="gestaoBox" hidden>
+      <div class="ptitle"><div><h2>Usuários e acessos</h2><p>Somente o administrador cadastra pessoas e define o tipo de acesso.</p></div><button class="btn primary" id="novoPerfilBtn" type="button">+ Novo usuário</button></div>
+      <div class="legend"><span><b>Visualizador</b> só vê e abre os painéis</span><span><b>Editor</b> também cria e edita painéis</span><span><b>Administrador</b> acesso a tudo: painéis, exclusões e usuários</span></div>
+      <div id="perfisLista"></div>
+    </div>
+   </section>
+  </main>
+</div>
+
+<dialog id="dlg" class="wide">
+  <form class="dlg" id="form" novalidate>
+    <h3 id="dlgTitle">Novo painel</h3>
+    <div class="dlg-scroll">
+      <div class="field"><label for="fTitulo">Nome do painel</label><input id="fTitulo" type="text" maxlength="80" required></div>
+      <div class="field"><label for="fDesc">Descrição</label><textarea id="fDesc" maxlength="200"></textarea></div>
+      <div class="row2">
+        <div class="field"><label for="fCat">Categoria</label><select id="fCat"></select></div>
+        <div class="field" id="fNovaCatBox" hidden><label for="fNovaCat">Nome da nova categoria</label><input id="fNovaCat" type="text" maxlength="30"></div>
+      </div>
+      <div class="field"><label for="fLink">Link do relatório (Power BI)</label><input id="fLink" type="url" placeholder="https://app.powerbi.com/..."><p class="hint">Pode deixar em branco e cadastrar depois.</p></div>
+      <div class="field">
+        <span class="lab">Miniatura</span>
+        <div class="thumbpick">
+          <div class="prev" id="fPrev"></div>
+          <div class="opts">
+            <label class="filebtn">Enviar imagem (print do painel)<input id="fImg" type="file" accept="image/*"></label>
+            <button type="button" class="linkbtn" id="fImgRemove" hidden>Remover imagem e usar gráfico</button>
+            <div id="fTipoBox"><select id="fTipo" aria-label="Estilo do gráfico">
+              <option value="barras">Gráfico de barras</option><option value="barrasH">Barras horizontais</option>
+              <option value="linha">Gráfico de linha</option><option value="rosca">Gráfico de rosca</option><option value="calendario">Calendário</option>
+            </select></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="delBtn">Excluir painel</button>
+      <button type="button" class="btn" id="cancelBtn">Cancelar</button>
+      <button type="submit" class="btn primary" id="saveBtn">Salvar e publicar</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dlgPerfil">
+  <form class="dlg" id="npForm" novalidate autocomplete="off">
+    <h3 id="npTitulo">Novo usuário</h3>
+    <div class="field"><label for="npNome">Nome completo</label><input id="npNome" type="text" maxlength="60"></div>
+    <div class="row2">
+      <div class="field"><label for="npEmail">E-mail</label><input id="npEmail" type="email"></div>
+      <div class="field"><label for="npEmpresa">Empresa</label><input id="npEmpresa" type="text" maxlength="60"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="npTipo">Tipo de acesso</label>
+        <select id="npTipo"><option value="visualizador">Visualizador</option><option value="editor">Editor</option><option value="admin">Administrador</option></select>
+      </div>
+      <div class="field" id="npSenhaBox"><label for="npSenha">Senha inicial (mín. 8)</label><input id="npSenha" type="password" autocomplete="new-password"></div>
+    </div>
+    <label class="chk" id="npAtivoBox"><input type="checkbox" id="npAtivo" checked> Acesso ativo</label>
+    <p class="hint" id="npHint">Passe a senha inicial para a pessoa; ela pode trocar depois em Meu perfil.</p>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="npReset">Enviar e-mail para redefinir senha</button>
+      <button type="button" class="btn" id="npCancelar">Cancelar</button>
+      <button type="submit" class="btn primary" id="npSalvar">Salvar</button>
+    </div>
+  </form>
+</dialog>
+

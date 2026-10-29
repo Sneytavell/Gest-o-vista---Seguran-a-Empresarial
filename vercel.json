@@ -1,4 +1,8 @@
 {
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "cp firebase-config.js dist/firebase-config.js",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "headers": [
     { "source": "/(.*)", "headers": [ { "key": "X-Robots-Tag", "value": "noindex, nofollow" } ] }

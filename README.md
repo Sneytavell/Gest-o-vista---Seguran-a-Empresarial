@@ -1,32 +1,42 @@
 # Gestão à Vista — Segurança Empresarial
 
-Portal da Segurança Empresarial da Albras que reúne, em um só lugar, os painéis de Power BI da área.
+Portal da Segurança Empresarial da Albras que reúne os painéis de Power BI da área, com login e controle de acesso.
 
-## O que tem
+## Perfis de acesso
 
-- Menu lateral com categorias recolhíveis (Patrimonial, Emergência, Equipamentos, Treinamentos, Gestão) e seus painéis.
-- Relatório do Power BI aberto dentro do portal, com botões de tela cheia, recarregar e abrir em nova aba.
-- Busca, favoritos, recentes e barra de "Mais acessados" (salvos no navegador de cada pessoa).
-- Tema claro e escuro.
+| Perfil | O que pode fazer |
+|---|---|
+| **Administrador** | Tudo: cria, edita e exclui painéis, cadastra usuários, define perfis, ativa e desativa acessos |
+| **Editor** | Cria e edita painéis e categorias |
+| **Visualizador** | Só vê e abre os painéis |
+
+Sem login, nada aparece. As permissões são conferidas pelo banco (regras em `firestore.rules`), não só pela tela.
 
 ## Estrutura
 
-| Arquivo | Função |
+| Caminho | Função |
 |---|---|
-| `index.html` | O portal inteiro (página, estilos, código e lista de painéis). |
-| `vercel.json` | Configuração da Vercel (URLs limpas e página fora dos buscadores). |
+| `src/telas.html` | Telas (login, portal, perfil, formulários) |
+| `src/estilo.css` | Visual |
+| `src/app.js` | Código do portal, login e gestão de usuários |
+| `dados/logo.txt` | Logo da Albras |
+| `dados/semente.json` | Lista inicial de painéis (importada uma vez pelo administrador) |
+| `firebase-config.js` | Dados do projeto Firebase (preencher) |
+| `firestore.rules` | Regras de acesso do banco |
+| `build.py` | Monta `dist/index.html` |
+| `dist/` | Site publicado na Vercel |
 
-## Como alterar os painéis
+## Configuração (uma vez)
 
-A lista de painéis fica no bloco `<script id="dados" type="application/json">` do `index.html`.
-Cada painel tem `titulo`, `desc`, `cat` (categoria), `link` (link do Power BI) e, opcionalmente, `img` (miniatura).
+1. **Firebase** (console.firebase.google.com) — use um projeto **só para este portal**:
+   - *Authentication → Método de login →* ative **E-mail/senha**.
+   - *Firestore Database →* crie o banco e, em **Regras**, cole o conteúdo de `firestore.rules` e publique.
+   - *Configurações do projeto → Seus apps →* crie um **App da Web** e copie a configuração para `firebase-config.js`.
+   - *Authentication → Configurações → Domínios autorizados →* adicione o domínio da Vercel (ex.: `gestao-a-vista.vercel.app`).
+2. Rode `python build.py`, faça commit e push. A Vercel publica a pasta `dist`.
+3. Abra o site e faça a **Primeira configuração** (cria o administrador). Depois, clique em **Importar painéis atuais**.
 
-## Publicação
+## Alterações
 
-O repositório está pronto para a Vercel: em vercel.com, **Add New → Project**, escolha este repositório e clique em **Deploy**.
-Cada alteração enviada para a branch `main` atualiza o mesmo link automaticamente.
-
-## Acesso
-
-O site não tem login próprio. Os dados ficam protegidos pelo login da Microsoft no Power BI:
-só abre o relatório quem tem acesso a ele.
+Edite os arquivos em `src/`, rode `python build.py`, registre em `docs/historico-de-etapas.md`, faça commit e push na `main`.
+Painéis e usuários do dia a dia são alterados pelo próprio portal, sem mexer no código.
