@@ -378,7 +378,16 @@ function telaGate(qual, msg, acao){
 }
 async function mostrarEntrada(erro){
   let precisaSetup = false;
-  try { precisaSetup = !(await db.doc("config/inicial").get()).exists; } catch(e) {}
+  try { precisaSetup = !(await db.doc("config/inicial").get()).exists; }
+  catch(e){
+    const c = String(e && (e.code || e.message) || e);
+    const dica = /permission/i.test(c) ? "As regras do banco ainda não foram publicadas. No Firebase, abra Firestore Database → Regras, cole o conteúdo de firestore.rules e clique em Publicar."
+      : /not-found|NOT_FOUND|does not exist/i.test(c) ? "O banco ainda não foi criado. No Firebase, abra Firestore Database → Criar banco de dados."
+      : /unavailable|offline|network/i.test(c) ? "Sem conexão com o banco. Verifique a internet."
+      : "Não foi possível ler o banco.";
+    telaGate(null, dica + " (código: " + c + ")", { txt:"Tentar de novo", fn:()=>{ telaGate(null, "Carregando…"); mostrarEntrada(erro); } });
+    return;
+  }
   if(precisaSetup){ telaGate("gSetup", ""); return; }
   $("gErro").textContent = erro || "";
   telaGate("gLogin", "Entre com seu e-mail e senha.");

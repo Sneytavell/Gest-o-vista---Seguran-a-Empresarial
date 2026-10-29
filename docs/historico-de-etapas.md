@@ -7,3 +7,4 @@
 - Painéis passam a ficar no banco: o que o administrador ou editor muda aparece na hora para todos.
 - Regras do banco (`firestore.rules`) garantem as permissões no servidor.
 - Banco ligado ao projeto Firebase `gestao-a-vista-c541f` (`firebase-config.js`).
+- Mensagem clara quando o banco não foi criado ou as regras não foram publicadas.
