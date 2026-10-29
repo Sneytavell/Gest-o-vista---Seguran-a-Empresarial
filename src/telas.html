@@ -13,6 +13,11 @@
         <p class="gerro" id="gErro" role="alert"></p>
         <button class="btn primary gbtn" type="submit" id="gEntrar">Entrar</button>
         <button class="glink" type="button" id="gEsqueci">Esqueci minha senha</button>
+        <div id="gVisBox" hidden>
+          <div class="gsep">ou</div>
+          <button class="btn gbtn gvis" type="button" id="gVisitante">Entrar como visitante</button>
+          <p class="ghint">Só visualização, sem cadastro.</p>
+        </div>
       </form>
 
       <form id="gSetup" class="gform" novalidate hidden>
@@ -119,6 +124,7 @@
     </div>
     <div class="pcard" id="gestaoBox" hidden>
       <div class="ptitle"><div><h2>Usuários e acessos</h2><p>Somente o administrador cadastra pessoas e define o tipo de acesso.</p></div><button class="btn primary" id="novoPerfilBtn" type="button">+ Novo usuário</button></div>
+      <label class="chk vischk"><input type="checkbox" id="visLiberado"> Permitir acesso de visitante (só visualização, sem cadastro)</label>
       <div class="legend"><span><b>Visualizador</b> só vê e abre os painéis</span><span><b>Editor</b> também cria e edita painéis</span><span><b>Administrador</b> acesso a tudo: painéis, exclusões e usuários</span></div>
       <div id="perfisLista"></div>
     </div>

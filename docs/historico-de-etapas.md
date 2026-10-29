@@ -8,3 +8,4 @@
 - Regras do banco (`firestore.rules`) garantem as permissões no servidor.
 - Banco ligado ao projeto Firebase `gestao-a-vista-c541f` (`firebase-config.js`).
 - Mensagem clara quando o banco não foi criado ou as regras não foram publicadas.
+- Acesso de visitante: botão "Entrar como visitante" (só visualização, sem cadastro), usando o login Anônimo do Firebase. O administrador liga ou desliga em Meu perfil → Usuários e acessos; desligado, os visitantes saem na hora.

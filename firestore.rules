@@ -1,6 +1,7 @@
 rules_version = '2';
 // Regras do banco do Gestão à Vista.
-// - Sem login, nada é lido nem gravado (exceto saber se o portal já foi configurado).
+// - Sem login, nada é lido nem gravado (exceto saber se o portal já foi configurado e se há acesso de visitante).
+// - Visitante (sem cadastro): só lê os painéis, enquanto o administrador deixar ligado.
 // - Visualizador: só lê os painéis.
 // - Editor: lê, cria e edita painéis e categorias.
 // - Administrador: tudo, inclusive excluir painéis e gerenciar usuários.
@@ -16,6 +17,13 @@ service cloud.firestore {
     function editor() { return ativo() && (eu().papel == 'admin' || eu().papel == 'editor'); }
     function papelValido(d) { return d.papel in ['visualizador', 'editor', 'admin'] && d.ativo is bool; }
     function inicial() { return /databases/$(database)/documents/config/inicial; }
+    function acesso() { return /databases/$(database)/documents/config/acesso; }
+    // Visitante: login anônimo ("Entrar como visitante"), só leitura, se o administrador não desligou
+    function visitante() {
+      return logado() && request.auth.token.firebase.sign_in_provider == 'anonymous'
+        && (!exists(acesso()) || get(acesso()).data.visitantes != false);
+    }
+    function podeVer() { return ativo() || visitante(); }
 
     // Cadastro de usuários
     match /usuarios/{uid} {
@@ -44,15 +52,21 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Liga/desliga o acesso de visitante
+    match /config/acesso {
+      allow read: if true;
+      allow write: if admin();
+    }
+
     // Cores das categorias
     match /config/geral {
-      allow read: if ativo();
+      allow read: if podeVer();
       allow write: if editor();
     }
 
     // Painéis
     match /paineis/{id} {
-      allow read: if ativo();
+      allow read: if podeVer();
       allow create, update: if editor();
       allow delete: if admin();
     }

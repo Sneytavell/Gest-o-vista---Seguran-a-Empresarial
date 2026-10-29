@@ -9,6 +9,7 @@ Portal da Segurança Empresarial da Albras que reúne os painéis de Power BI da
 | **Administrador** | Tudo: cria, edita e exclui painéis, cadastra usuários, define perfis, ativa e desativa acessos |
 | **Editor** | Cria e edita painéis e categorias |
 | **Visualizador** | Só vê e abre os painéis |
+| **Visitante** | Sem cadastro: botão "Entrar como visitante", só visualização (o administrador liga ou desliga) |
 
 Sem login, nada aparece. As permissões são conferidas pelo banco (regras em `firestore.rules`), não só pela tela.
 
@@ -29,7 +30,7 @@ Sem login, nada aparece. As permissões são conferidas pelo banco (regras em `f
 ## Configuração (uma vez)
 
 1. **Firebase** (console.firebase.google.com) — use um projeto **só para este portal**:
-   - *Authentication → Método de login →* ative **E-mail/senha**.
+   - *Authentication → Método de login →* ative **E-mail/senha** e **Anônimo** (para o acesso de visitante).
    - *Firestore Database →* crie o banco e, em **Regras**, cole o conteúdo de `firestore.rules` e publique.
    - *Configurações do projeto → Seus apps →* crie um **App da Web** e copie a configuração para `firebase-config.js`.
    - *Authentication → Configurações → Domínios autorizados →* adicione o domínio da Vercel (ex.: `gestao-a-vista.vercel.app`).

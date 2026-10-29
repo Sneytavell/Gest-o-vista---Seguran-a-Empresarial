@@ -277,3 +277,9 @@ body.travado{overflow:hidden}
 .vazio-cta strong{display:block;color:var(--ink);font-size:1.1rem;margin-bottom:6px}
 .vazio-cta .btn{margin-top:14px}
 @media (max-width:560px){.row3{grid-template-columns:1fr}}
+.gsep{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.85rem;margin:14px 0 10px}
+.gsep::before,.gsep::after{content:"";flex:1;border-top:1px solid var(--line)}
+.gvis{background:transparent;border:1px solid var(--line)}
+.gvis:hover{border-color:var(--muted)}
+.ghint{margin:6px 0 0;text-align:center;color:var(--muted);font-size:.85rem}
+.vischk{display:flex;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin:0 0 14px;font-weight:500}

@@ -389,6 +389,7 @@ async function mostrarEntrada(erro){
     return;
   }
   if(precisaSetup){ telaGate("gSetup", ""); return; }
+  $("gVisBox").hidden = !(await visitantesLiberados());
   $("gErro").textContent = erro || "";
   telaGate("gLogin", "Entre com seu e-mail e senha.");
 }
@@ -432,13 +433,46 @@ $("gSetup").onsubmit = async e=>{
   } finally { b.disabled = false; }
 };
 
+/* --- acesso de visitante (só visualização, sem cadastro) --- */
+async function visitantesLiberados(){
+  try { const s = await db.doc("config/acesso").get(); return !s.exists || s.data().visitantes !== false; }
+  catch(e){ return false; }
+}
+$("gVisitante").onclick = async ()=>{
+  const b = $("gVisitante"), err = $("gErro"); b.disabled = true; err.textContent = "";
+  try { await auth.signInAnonymously(); }
+  catch(x){ err.textContent = /admin-restricted|operation-not-allowed/i.test(String(x && x.code)) ? "O acesso de visitante não está ativado no Firebase (Authentication → Método de login → Anônimo)." : msgErro(x); }
+  finally { b.disabled = false; }
+};
+async function entrarVisitante(u){
+  if(!(await visitantesLiberados())){ await auth.signOut(); mostrarEntrada("O acesso de visitante está desligado. Entre com e-mail e senha."); return; }
+  EU = { uid:u.uid, nome:"Visitante", papel:"visualizador", visitante:true };
+  aplicarPerfil();
+  gate.hidden = true; document.body.classList.remove("travado");
+  unsubs.push(db.doc("config/acesso").onSnapshot(s=>{
+    if(s.exists && s.data().visitantes === false) sair("O acesso de visitante foi desligado. Entre com e-mail e senha.");
+  }, ()=>{}));
+  ouvirPaineis();
+}
+
 /* --- sessão --- */
+function ouvirPaineis(){
+  unsubs.push(db.collection("paineis").orderBy("ordem").onSnapshot(s=>{
+    DADOS = { ...DADOS, paineis: s.docs.map(x=>({ id:x.id, ...x.data() })) };
+    render();
+    if(painelAberto && !DADOS.paineis.some(p=>p.id===painelAberto)){ mostrarPainel(); render(); }
+  }, ()=> aviso("Não foi possível carregar os painéis.")));
+  unsubs.push(db.doc("config/geral").onSnapshot(s=>{
+    DADOS = { ...DADOS, categorias: (s.exists && s.data().categorias) || {} }; render();
+  }, ()=>{}));
+}
 function pararOuvintes(){ unsubs.forEach(f=>{ try { f(); } catch(e) {} }); unsubs = []; }
 async function aoMudarLogin(u){
   if(configurando) return;
   pararOuvintes(); EU = null; usuarios = {};
   podeEditar = podeCriar = podeGerir = false; conta.hidden = true; $("createBtn").hidden = true;
   if(!u){ DADOS = { categorias:{}, paineis:[] }; mostrarPainel(); render(); mostrarEntrada(); return; }
+  if(u.isAnonymous){ await entrarVisitante(u); return; }
   let d = null;
   try { d = await db.doc("usuarios/" + u.uid).get(); } catch(e) {}
   if(!d || !d.exists || d.data().ativo !== true){
@@ -455,14 +489,7 @@ async function aoMudarLogin(u){
     EU = { uid:u.uid, ...s.data() }; aplicarPerfil();
   }, ()=>{}));
   /* painéis e categorias */
-  unsubs.push(db.collection("paineis").orderBy("ordem").onSnapshot(s=>{
-    DADOS = { ...DADOS, paineis: s.docs.map(x=>({ id:x.id, ...x.data() })) };
-    render();
-    if(painelAberto && !DADOS.paineis.some(p=>p.id===painelAberto)){ mostrarPainel(); render(); }
-  }, ()=> aviso("Não foi possível carregar os painéis.")));
-  unsubs.push(db.doc("config/geral").onSnapshot(s=>{
-    DADOS = { ...DADOS, categorias: (s.exists && s.data().categorias) || {} }; render();
-  }, ()=>{}));
+  ouvirPaineis();
 }
 async function sair(msg){
   fecharPops(); mostrarPainel();
@@ -484,6 +511,8 @@ function aplicarPerfil(){
   $("userRole").textContent = ROTULO[papel];
   userBtn.title = EU.nome; userBtn.setAttribute("aria-label","Conta de " + EU.nome);
   conta.hidden = false; $("createBtn").hidden = !podeCriar;
+  $("uPerfil").hidden = !!EU.visitante;
+  if(EU.visitante) $("userEmpresa").textContent = "Acesso só para visualização";
   if(podeGerir && !unsubs.usuarios){
     const f = db.collection("usuarios").onSnapshot(s=>{
       usuarios = {}; s.docs.forEach(x=> usuarios[x.id] = x.data());
@@ -507,8 +536,13 @@ function renderPerfil(){
   $("pNome").textContent = EU.nome; $("pEmail").textContent = EU.email || "";
   $("pEmp").textContent = EU.empresa || "Não informada"; $("pTipo").textContent = ROTULO[papel];
   $("gestaoBox").hidden = !podeGerir;
-  if(podeGerir) listarUsuarios();
+  if(podeGerir){ listarUsuarios(); visitantesLiberados().then(v=> $("visLiberado").checked = v); }
 }
+$("visLiberado").onchange = async e=>{
+  const v = e.target.checked;
+  try { await db.doc("config/acesso").set({ visitantes:v, atualizadoEm:new Date().toISOString(), atualizadoPor:EU.nome }, { merge:true }); aviso(v ? "Acesso de visitante ligado." : "Acesso de visitante desligado. Visitantes conectados saem na hora."); }
+  catch(x){ e.target.checked = !v; aviso(msgErro(x)); }
+};
 $("pSenhaForm").onsubmit = async e=>{
   e.preventDefault();
   const atual = $("psAtual").value, nova = $("psNova").value;
